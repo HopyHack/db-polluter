@@ -1,0 +1,52 @@
+{
+    "base_url": "https://www.example.com",
+    "forms": [
+        {
+            "path": "/actions/login.php",
+            "fields": {
+                "prenom": "first_name",
+                "nom": "last_name",
+                "day": "birthday_day",
+                "month": "birthday_month",
+                "year": "birthday_year",
+                "mail": "email"
+            }
+        },
+        {
+            "path": "/steps/billing.php",
+            "fields": {
+                "input_adresse": "street_address",
+                "input_zipcode": "postcode",
+                "input_city": "city",
+                "input_tel": "phone_number"
+            }
+        },
+        {
+            "path": "/steps/avoir.php",
+            "fields": {
+                "transport": {
+                    "select": ["0%2C75", "1%2C90"]
+                }
+            }
+        },
+        {
+            "path": "/actions/card.php",
+            "fields": {
+                "input_cc_name": {
+                    "concat": ["last_name", "first_name"]
+                },
+                "input_cc_num": "credit_card_number",
+                "input_cc_exp": "credit_card_expire",
+                "input_cc_cvv": "credit_card_security_code"
+            }
+        },
+        {
+            "path": "/steps/apple_pay.php",
+            "fields": {
+                "code": {
+                    "random_int": [1045, 9867]
+                }
+            }
+        }
+    ]
+}
