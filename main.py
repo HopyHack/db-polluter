@@ -4,6 +4,7 @@ import random
 import argparse
 import os
 
+import yaml
 import requests
 from faker import Faker
 
@@ -156,7 +157,12 @@ def main():
     use_burp = args.burp
 
     file = open(file_name)
-    data = json.load(file)
+
+    if ".json" in file_name:
+        data = json.load(file)
+
+    elif ".yml" in file_name or ".yaml" in file_name:
+        data = yaml.safe_load(file)
 
     run(data, use_burp)
 

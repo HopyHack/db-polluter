@@ -1,0 +1,20 @@
+---
+base_url: https://example.com/
+forms:
+- path: "/actions/login.php"
+  fields:
+    prenom: first_name
+    nom: last_name
+    day: birthday_day
+    month: birthday_month
+    year: birthday_year
+    mail: email
+- path: "/actions/card.php"
+  fields:
+    input_cc_name:
+      concat:
+      - last_name
+      - first_name
+    input_cc_num: credit_card_number
+    input_cc_exp: credit_card_expire
+    input_cc_cvv: credit_card_security_code
