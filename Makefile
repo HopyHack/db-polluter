@@ -75,7 +75,7 @@ offlinetest: codetest
 
 # XXX: This is hard to maintain
 CODE_FOLDERS = yt_dlp yt_dlp/downloader yt_dlp/extractor yt_dlp/postprocessor yt_dlp/compat
-db_polluteur: yt_dlp/*.py yt_dlp/*/*.py
+db_polluteur: **/*.py *.py
 	mkdir -p zip
 	for d in $(CODE_FOLDERS) ; do \
 	  mkdir -p zip/$$d ;\
