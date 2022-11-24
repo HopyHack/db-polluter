@@ -49,7 +49,7 @@ VARIANT = None
 UPDATE_HINT = None
 '''
 
-write_file('version.py', VERSION_FILE)
+write_file('yt_dlp/version.py', VERSION_FILE)
 github_output = os.getenv('GITHUB_OUTPUT')
 if github_output:
     write_file(github_output, f'ytdlp_version={VERSION}\n', 'a')

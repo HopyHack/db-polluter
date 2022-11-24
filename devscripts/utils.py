@@ -13,7 +13,7 @@ def write_file(fname, content, mode='w'):
 
 
 # Get the version without importing the package
-def read_version(fname='version.py'):
+def read_version(fname='yt_dlp/version.py'):
     exec(compile(read_file(fname), fname, 'exec'))
     return locals()['__version__']
 
