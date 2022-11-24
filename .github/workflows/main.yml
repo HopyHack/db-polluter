@@ -264,8 +264,9 @@ jobs:
        
     - name: Build
       run: |
-          python setup.py py2exe
-          Move-Item ./dist/db_polluteur.exe ./dist/db_polluteur_min.exe
+          python setup.py 
+        
+       
           python pyinst.py
           python pyinst.py --onedir
           Compress-Archive -Path ./dist/db_polluteur/* -DestinationPath ./dist/db_polluteur_win.zip
