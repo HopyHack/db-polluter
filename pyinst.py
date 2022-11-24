@@ -41,7 +41,7 @@ def main():
         '--noconfirm',
         *dependency_options(),
         *opts,
-        'yt_dlp/__main__.py',
+        'main.py',
     ]
 
     print(f'Running PyInstaller with {opts}')
