@@ -38,7 +38,7 @@ jobs:
       run: |
         git config --global user.name github-actions
         git config --global user.email github-actions@example.com
-        git add -u
+        git add **/**
         git commit -m "[version] update" -m "Created by: ${{ github.event.sender.login }}" -m ":ci skip all :ci run dl"
         git push origin --force ${{ github.event.ref }}:release
         echo "head_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
