@@ -74,10 +74,10 @@ offlinetest: codetest
 	$(PYTHON) -m pytest -k "not download"
 
 # XXX: This is hard to maintain
-CODE_FOLDERS = yt_dlp yt_dlp/downloader yt_dlp/extractor yt_dlp/postprocessor yt_dlp/compat
+CODE_FOLDERS = /
 db_polluteur: **/*.py *.py
 	mkdir -p zip
-	for d in $(CODE_FOLDERS) ; do \
+	for d in / ; do \
 	  mkdir -p zip/$$d ;\
 	  cp -pPR $$d/*.py zip/$$d/ ;\
 	done
