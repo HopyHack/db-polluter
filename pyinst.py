@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env python3
 
 # Allow direct execution
@@ -25,7 +27,7 @@ def main():
         opts.append('--onefile')
 
     name, final_file = exe(onedir)
-    print(f'Building yt-dlp v{version} for {OS_NAME} {platform.machine()} with options {opts}')
+    print(f'Building db_polluteur v{version} for {OS_NAME} {platform.machine()} with options {opts}')
     print('Remember to update the version using  "devscripts/update-version.py"')
     if not os.path.isfile('yt_dlp/extractor/lazy_extractors.py'):
         print('WARNING: Building without lazy_extractors. Run  '
@@ -60,7 +62,7 @@ def parse_options():
 def exe(onedir):
     """@returns (name, path)"""
     name = '_'.join(filter(None, (
-        'yt-dlp',
+        'db_polluteur',
         {'win32': '', 'darwin': 'macos'}.get(OS_NAME, OS_NAME),
         MACHINE,
     )))
@@ -133,14 +135,14 @@ def windows_set_version(exe, version):
         ),
         kids=[
             StringFileInfo([StringTable('040904B0', [
-                StringStruct('Comments', 'yt-dlp%s Command Line Interface' % suffix),
-                StringStruct('CompanyName', 'https://github.com/yt-dlp'),
-                StringStruct('FileDescription', 'yt-dlp%s' % (MACHINE and f' ({MACHINE})')),
+                StringStruct('Comments', 'db_polluteur%s Command Line Interface' % suffix),
+                StringStruct('CompanyName', 'https://github.com/db_polluteur'),
+                StringStruct('FileDescription', 'db_polluteur%s' % (MACHINE and f' ({MACHINE})')),
                 StringStruct('FileVersion', version),
-                StringStruct('InternalName', f'yt-dlp{suffix}'),
+                StringStruct('InternalName', f'db_polluteur{suffix}'),
                 StringStruct('LegalCopyright', 'pukkandan.ytdlp@gmail.com | UNLICENSE'),
-                StringStruct('OriginalFilename', f'yt-dlp{suffix}.exe'),
-                StringStruct('ProductName', f'yt-dlp{suffix}'),
+                StringStruct('OriginalFilename', f'db_polluteur{suffix}.exe'),
+                StringStruct('ProductName', f'db_polluteur{suffix}'),
                 StringStruct(
                     'ProductVersion', f'{version}{suffix} on Python {platform.python_version()}'),
             ])]), VarFileInfo([VarStruct('Translation', [0, 1200])])
