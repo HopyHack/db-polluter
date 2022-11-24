@@ -79,7 +79,7 @@ db_polluteur: **/*.py *.py
 	mkdir -p zip
 	
 	  cp -pPR *.py zip/
-	done
+	
 	touch -t 200001010101 zip/*.py zip/*/*.py
 	mv zip/main.py zip/
 	cd zip ; zip -q ../db_polluteur *.py /*/*.py main.py
