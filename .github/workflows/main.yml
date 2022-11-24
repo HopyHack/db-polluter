@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version_suffix: ${{ steps.version_suffix.outputs.version_suffix }}
-      ytdlp_version: ${{ steps.bump_version.outputs.ytdlp_version }}
+      db_polluteur_version: ${{ steps.bump_version.outputs.db_polluteur_version }}
       head_sha: ${{ steps.push_release.outputs.head_sha }}
     steps:
     - uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
       id: bump_version
       run: |
         python devscripts/update-version.py ${{ steps.version_suffix.outputs.version_suffix }}
-        make issuetemplates
+      
 
     - name: Push to release
       id: push_release
@@ -84,22 +84,22 @@ jobs:
       run: |
           make all tar
     - name: Build Unix standalone binary
-      shell: bash -l {0}
+      shell: bash 
       run: |
           unset LD_LIBRARY_PATH  # Harmful; set by setup-python
           conda activate build
           python pyinst.py --onedir
-          (cd ./dist/yt-dlp_linux && zip -r ../yt-dlp_linux.zip .)
+          (cd ./dist/db_polluteur_linux && zip -r ../db_polluteur_linux.zip .)
           python pyinst.py
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         path: |
-          yt-dlp
-          yt-dlp.tar.gz
-          dist/yt-dlp_linux
-          dist/yt-dlp_linux.zip
+          db_polluteur
+          db_polluteur.tar.gz
+          dist/db_polluteur_linux
+          dist/db_polluteur_linux.zip
 
     - name: Build and publish on PyPi
       env:
@@ -108,7 +108,7 @@ jobs:
       if: "env.TWINE_PASSWORD != ''"
       run: |
         rm -rf dist/*
-        python devscripts/set-variant.py pip -M "You installed yt-dlp with pip or using the wheel from PyPi; Use that to update"
+        python devscripts/set-variant.py pip -M "You installed db_polluteur with pip or using the wheel from PyPi; Use that to update"
         python setup.py sdist bdist_wheel
         twine upload dist/*
 
@@ -125,10 +125,10 @@ jobs:
       if: "env.BREW_TOKEN != ''"
       run: |
         git clone git@github.com:yt-dlp/homebrew-taps taps/
-        python devscripts/update-formulae.py taps/Formula/yt-dlp.rb "${{ needs.prepare.outputs.ytdlp_version }}"
+        python devscripts/update-formulae.py taps/Formula/yt-dlp.rb "${{ needs.prepare.outputs.db_polluteur_version }}"
         git -C taps/ config user.name github-actions
         git -C taps/ config user.email github-actions@example.com
-        git -C taps/ commit -am 'yt-dlp: ${{ needs.prepare.outputs.ytdlp_version }}'
+        git -C taps/ commit -am 'db_polluteur: ${{ needs.prepare.outputs.db_polluteur_version }}'
         git -C taps/ push
 
 
@@ -172,7 +172,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         path: |  # run-on-arch-action designates armv7l as armv7
-          repo/dist/yt-dlp_linux_${{ (matrix.architecture == 'armv7' && 'armv7l') || matrix.architecture }}
+          repo/dist/db_polluteur_linux_${{ (matrix.architecture == 'armv7' && 'armv7l') || matrix.architecture }}
 
 
   build_macos:
@@ -194,15 +194,15 @@ jobs:
     - name: Build
       run: |
           /usr/bin/python3 pyinst.py --target-architecture universal2 --onedir
-          (cd ./dist/yt-dlp_macos && zip -r ../yt-dlp_macos.zip .)
+          (cd ./dist/db_polluteur_macos && zip -r ../db_polluteur_macos.zip .)
           /usr/bin/python3 pyinst.py --target-architecture universal2
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         path: |
-          dist/yt-dlp_macos
-          dist/yt-dlp_macos.zip
+          dist/db_polluteur_macos
+          dist/db_polluteur_macos.zip
 
 
   build_macos_legacy:
@@ -235,13 +235,13 @@ jobs:
     - name: Build
       run: |
           python3 pyinst.py
-          mv dist/yt-dlp_macos dist/yt-dlp_macos_legacy
+          mv dist/db_polluteur_macos dist/db_polluteur_macos_legacy
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         path: |
-          dist/yt-dlp_macos_legacy
+          dist/db_polluteur_macos_legacy
 
 
   build_windows:
@@ -265,18 +265,18 @@ jobs:
     - name: Build
       run: |
           python setup.py py2exe
-          Move-Item ./dist/yt-dlp.exe ./dist/yt-dlp_min.exe
+          Move-Item ./dist/db_polluteur.exe ./dist/db_polluteur_min.exe
           python pyinst.py
           python pyinst.py --onedir
-          Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win.zip
+          Compress-Archive -Path ./dist/db_polluteur/* -DestinationPath ./dist/db_polluteur_win.zip
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         path: |
-          dist/yt-dlp.exe
-          dist/yt-dlp_min.exe
-          dist/yt-dlp_win.zip
+          dist/db_polluteur.exe
+          dist/db_polluteur_min.exe
+          dist/db_polluteur_win.zip
 
 
   build_windows32:
@@ -286,7 +286,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
-      with:  # 3.7 is used for Vista support. See https://github.com/yt-dlp/yt-dlp/issues/390
+      with:  # 3.7 is used for Vista support. See https://github.com/db_polluteur/db_polluteur/issues/390
           python-version: '3.7'
           architecture: 'x86'
     - name: Install Requirements
@@ -306,7 +306,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         path: |
-          dist/yt-dlp_x86.exe
+          dist/db_polluteur_x86.exe
 
 
   publish_release:
@@ -321,7 +321,7 @@ jobs:
 
     - name: Get Changelog
       run: |
-        changelog=$(grep -oPz '(?s)(?<=### ${{ needs.prepare.outputs.ytdlp_version }}\n{2}).+?(?=\n{2,3}###)' Changelog.md) || true
+        changelog=$(grep -oPz '(?s)(?<=### ${{ needs.prepare.outputs.db_polluteur_version }}\n{2}).+?(?=\n{2,3}###)' Changelog.md) || true
         echo "changelog<<EOF" >> $GITHUB_ENV
         echo "$changelog" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
@@ -331,41 +331,41 @@ jobs:
         echo "lock 2022.07.18 .+ Python 3.6" >> _update_spec
     - name: Make SHA2-SUMS files
       run: |
-          sha256sum artifact/yt-dlp | awk '{print $1 "  yt-dlp"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp.tar.gz | awk '{print $1 "  yt-dlp.tar.gz"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp.exe | awk '{print $1 "  yt-dlp.exe"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_win.zip | awk '{print $1 "  yt-dlp_win.zip"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_min.exe | awk '{print $1 "  yt-dlp_min.exe"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_x86.exe | awk '{print $1 "  yt-dlp_x86.exe"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_macos | awk '{print $1 "  yt-dlp_macos"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_macos.zip | awk '{print $1 "  yt-dlp_macos.zip"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_macos_legacy | awk '{print $1 "  yt-dlp_macos_legacy"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_linux_armv7l | awk '{print $1 "  yt-dlp_linux_armv7l"}' >> SHA2-256SUMS
-          sha256sum artifact/yt-dlp_linux_aarch64 | awk '{print $1 "  yt-dlp_linux_aarch64"}' >> SHA2-256SUMS
-          sha256sum artifact/dist/yt-dlp_linux | awk '{print $1 "  yt-dlp_linux"}' >> SHA2-256SUMS
-          sha256sum artifact/dist/yt-dlp_linux.zip | awk '{print $1 "  yt-dlp_linux.zip"}' >> SHA2-256SUMS
-          sha512sum artifact/yt-dlp | awk '{print $1 "  yt-dlp"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp.tar.gz | awk '{print $1 "  yt-dlp.tar.gz"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp.exe | awk '{print $1 "  yt-dlp.exe"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_win.zip | awk '{print $1 "  yt-dlp_win.zip"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_min.exe | awk '{print $1 "  yt-dlp_min.exe"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_x86.exe | awk '{print $1 "  yt-dlp_x86.exe"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_macos | awk '{print $1 "  yt-dlp_macos"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_macos.zip | awk '{print $1 "  yt-dlp_macos.zip"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_macos_legacy | awk '{print $1 "  yt-dlp_macos_legacy"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_linux_armv7l | awk '{print $1 "  yt-dlp_linux_armv7l"}' >> SHA2-512SUMS
-          sha512sum artifact/yt-dlp_linux_aarch64 | awk '{print $1 "  yt-dlp_linux_aarch64"}' >> SHA2-512SUMS
-          sha512sum artifact/dist/yt-dlp_linux | awk '{print $1 "  yt-dlp_linux"}' >> SHA2-512SUMS
-          sha512sum artifact/dist/yt-dlp_linux.zip | awk '{print $1 "  yt-dlp_linux.zip"}' >> SHA2-512SUMS
+          sha256sum artifact/db_polluteur | awk '{print $1 "  db_polluteur"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur.tar.gz | awk '{print $1 "  db_polluteur.tar.gz"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur.exe | awk '{print $1 "  db_polluteur.exe"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_win.zip | awk '{print $1 "  db_polluteur_win.zip"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_min.exe | awk '{print $1 "  db_polluteur_min.exe"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_x86.exe | awk '{print $1 "  db_polluteur_x86.exe"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_macos | awk '{print $1 "  db_polluteur_macos"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_macos.zip | awk '{print $1 "  db_polluteur_macos.zip"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_macos_legacy | awk '{print $1 "  db_polluteur_macos_legacy"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_linux_armv7l | awk '{print $1 "  db_polluteur_linux_armv7l"}' >> SHA2-256SUMS
+          sha256sum artifact/db_polluteur_linux_aarch64 | awk '{print $1 "  db_polluteur_linux_aarch64"}' >> SHA2-256SUMS
+          sha256sum artifact/dist/db_polluteur_linux | awk '{print $1 "  db_polluteur_linux"}' >> SHA2-256SUMS
+          sha256sum artifact/dist/db_polluteur_linux.zip | awk '{print $1 "  db_polluteur_linux.zip"}' >> SHA2-256SUMS
+          sha512sum artifact/db_polluteur | awk '{print $1 "  db_polluteur"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur.tar.gz | awk '{print $1 "  db_polluteur.tar.gz"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur.exe | awk '{print $1 "  db_polluteur.exe"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_win.zip | awk '{print $1 "  db_polluteur_win.zip"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_min.exe | awk '{print $1 "  db_polluteur_min.exe"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_x86.exe | awk '{print $1 "  db_polluteur_x86.exe"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_macos | awk '{print $1 "  db_polluteur_macos"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_macos.zip | awk '{print $1 "  db_polluteur_macos.zip"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_macos_legacy | awk '{print $1 "  db_polluteur_macos_legacy"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_linux_armv7l | awk '{print $1 "  db_polluteur_linux_armv7l"}' >> SHA2-512SUMS
+          sha512sum artifact/db_polluteur_linux_aarch64 | awk '{print $1 "  db_polluteur_linux_aarch64"}' >> SHA2-512SUMS
+          sha512sum artifact/dist/db_polluteur_linux | awk '{print $1 "  db_polluteur_linux"}' >> SHA2-512SUMS
+          sha512sum artifact/dist/db_polluteur_linux.zip | awk '{print $1 "  db_polluteur_linux.zip"}' >> SHA2-512SUMS
 
     - name: Publish Release
       uses: yt-dlp/action-gh-release@v1
       with:
-        tag_name: ${{ needs.prepare.outputs.ytdlp_version }}
-        name: yt-dlp ${{ needs.prepare.outputs.ytdlp_version }}
+        tag_name: ${{ needs.prepare.outputs.db_polluteur_version }}
+        name: yt-dlp ${{ needs.prepare.outputs.db_polluteur_version }}
         target_commitish: ${{ needs.prepare.outputs.head_sha }}
         body: |
-          #### [A description of the various files]((https://github.com/yt-dlp/yt-dlp#release-files)) are in the README
+          #### [A description of the various files]((https://github.com/db_polluteur/db_polluteur#release-files)) are in the README
 
           ---
           <details open><summary><h3>Changelog</summary>
@@ -378,17 +378,17 @@ jobs:
         files: |
           SHA2-256SUMS
           SHA2-512SUMS
-          artifact/yt-dlp
-          artifact/yt-dlp.tar.gz
-          artifact/yt-dlp.exe
-          artifact/yt-dlp_win.zip
-          artifact/yt-dlp_min.exe
-          artifact/yt-dlp_x86.exe
-          artifact/yt-dlp_macos
-          artifact/yt-dlp_macos.zip
-          artifact/yt-dlp_macos_legacy
-          artifact/yt-dlp_linux_armv7l
-          artifact/yt-dlp_linux_aarch64
-          artifact/dist/yt-dlp_linux
-          artifact/dist/yt-dlp_linux.zip
+          artifact/db_polluteur
+          artifact/db_polluteur.tar.gz
+          artifact/db_polluteur.exe
+          artifact/db_polluteur_win.zip
+          artifact/db_polluteur_min.exe
+          artifact/db_polluteur_x86.exe
+          artifact/db_polluteur_macos
+          artifact/db_polluteur_macos.zip
+          artifact/db_polluteur_macos_legacy
+          artifact/db_polluteur_linux_armv7l
+          artifact/db_polluteur_linux_aarch64
+          artifact/dist/db_polluteur_linux
+          artifact/dist/db_polluteur_linux.zip
           _update_spec
