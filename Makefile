@@ -1,4 +1,4 @@
-all: db_polluteur doc pypi-files
+all: lazy-extractors db_polluteur doc pypi-files
 clean: clean-test clean-dist
 clean-all: clean clean-cache
 completions: completion-bash completion-fish completion-zsh
@@ -21,7 +21,7 @@ clean-test:
 	*.mpga *.oga *.ogg *.opus *.png *.sbv *.srt *.swf *.swp *.tt *.ttml *.url *.vtt *.wav *.webloc *.webm *.webp
 clean-dist:
 	rm -rf db_polluteur.1.temp.md db_polluteur.1 README.txt MANIFEST build/ dist/ .coverage cover/ db_polluteur.tar.gz completions/ \
-	yt_dlp/extractor/  *.spec CONTRIBUTING.md.tmp db_polluteur db_polluteur.exe yt_dlp.egg-info/ AUTHORS .mailmap
+	yt_dlp/extractor/lazy_extractors.py *.spec CONTRIBUTING.md.tmp db_polluteur db_polluteur.exe yt_dlp.egg-info/ AUTHORS .mailmap
 clean-cache:
 	find . \( \
 		-type d -name .pytest_cache -o -type d -name __pycache__ -o -name "*.pyc" -o -name "*.class" \
@@ -30,7 +30,7 @@ clean-cache:
 completion-bash: completions/bash/db_polluteur
 completion-fish: completions/fish/db_polluteur.fish
 completion-zsh: completions/zsh/_db_polluteur
-
+lazy-extractors: yt_dlp/extractor/lazy_extractors.py
 
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
@@ -127,9 +127,9 @@ completions/fish/db_polluteur.fish: yt_dlp/*.py yt_dlp/*/*.py devscripts/fish-co
 	mkdir -p completions/fish
 	$(PYTHON) devscripts/fish-completion.py
 
-_EXTRACTOR_FILES = $(shell find yt_dlp/extractor -name '*.py' -and -not -name ' ')
-yt_dlp/extractor/ : devscripts/make_  devscripts/lazy_load_template.py $(_EXTRACTOR_FILES)
-	$(PYTHON) devscripts/make_  $@
+_EXTRACTOR_FILES = $(shell find yt_dlp/extractor -name '*.py' -and -not -name 'lazy_extractors.py')
+yt_dlp/extractor/lazy_extractors.py: devscripts/make_lazy_extractors.py devscripts/lazy_load_template.py $(_EXTRACTOR_FILES)
+	$(PYTHON) devscripts/make_lazy_extractors.py $@
 
 db_polluteur.tar.gz: all
 	@tar -czf db_polluteur.tar.gz --transform "s|^|db_polluteur/|" --owner 0 --group 0 \
